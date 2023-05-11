@@ -1,0 +1,24 @@
+PREFIX art: <http://top-songs.com/entity/artist#>
+PREFIX p: <http://top-songs.com/predicate#>
+
+SELECT ?s ?p ?o
+WHERE {
+    {
+        SELECT ?s ?p ?o
+        WHERE {
+            ?s p:writtenBy art:Eagles;
+               ?p ?o .
+        }
+    }
+  
+    UNION
+  
+    {
+        SELECT ?s ?p ?o
+        WHERE {
+            ?songID p:writtenBy art:Eagles;
+                    ?p2 ?s .
+            ?s ?p ?o .
+        }
+    }
+}

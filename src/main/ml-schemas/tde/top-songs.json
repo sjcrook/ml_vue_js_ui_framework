@@ -1,0 +1,353 @@
+{
+    "template": {
+        "context": "/*:top-song",
+        "vars": [
+            {
+                "name": "docID",
+                "val": "fn:base-uri(.)"
+            },        
+            {
+                "name": "songID",
+                "val": "'http://top-songs.com/entity/song#' || fn:base-uri(.)"
+            },
+            {
+                "name": "albumID",
+                "val": "'http://top-songs.com/entity/album#' || fn:replace(*:album, '\\s+', '_')"
+            },
+            {
+                "name": "artistID",
+                "val": "'http://top-songs.com/entity/artist#' || fn:replace(*:artist, '\\s+', '_')"
+            },
+            {
+                "name": "labelID",
+                "val": "'http://top-songs.com/entity/label#' || fn:replace(*:label, '\\s+', '_')"
+            },
+            {
+                "name": "ppfx",
+                "val": "'http://top-songs.com/predicate#'"
+            }
+        ],
+        "rows": [
+            {
+                "schemaName": "music",
+                "viewName": "song",
+                "columns": [
+                    {
+                        "name": "ID",
+                        "scalarType": "string",
+                        "val": "$docID"
+                    },
+                    {
+                        "name": "title",
+                        "scalarType": "string",
+                        "val": "*:title",
+                        "nullable": true
+                    },
+                    {
+                        "name": "artist",
+                        "scalarType": "string",
+                        "val": "*:artist",
+                        "nullable": true
+                    },
+                    {
+                        "name": "album",
+                        "scalarType": "string",
+                        "val": "*:album",
+                        "nullable": true
+                    },
+                    {
+                        "name": "label",
+                        "scalarType": "string",
+                        "val": "*:label",
+                        "nullable": true
+                    },
+                    {
+                        "name": "releasedDate",
+                        "scalarType": "string",
+                        "val": "*:released",
+                        "nullable": true
+                    },
+                    {
+                        "name": "recordedDate",
+                        "scalarType": "string",
+                        "val": "*:recorded",
+                        "nullable": true
+                    }
+                ]
+            }
+        ],
+        "triples": [
+            {
+                "subject": { "val": "sem:iri($songID)" },
+                "predicate": { "val": "sem:iri($ppfx || 'hasSongTitle')" },
+                "object": { "val": "xs:string(*:title)" }
+            }
+        ],
+        "templates": [
+            {
+                "context": "*:album[fn:string-length(.) gt 0]",
+                "triples": [
+                    {
+                        "subject": { "val": "sem:iri($songID)" },
+                        "predicate": { "val": "sem:iri($ppfx || 'onAlbum')" },
+                        "object": { "val": "sem:iri($albumID)" }
+                    },
+                    {
+                        "subject": { "val": "sem:iri($albumID)" },
+                        "predicate": { "val": "sem:iri($ppfx || 'hasAlbumTitle')" },
+                        "object": { "val": "xs:string(.)" }
+                    }
+                ]
+            },
+            {
+                "context": "*:artist[fn:string-length(.) gt 0]",
+                "triples": [
+                    {
+                        "subject": { "val": "sem:iri($songID)" },
+                        "predicate": { "val": "sem:iri($ppfx || 'writtenBy')" },
+                        "object": { "val": "sem:iri($artistID)" }
+                    },
+                    {
+                        "subject": { "val": "sem:iri($artistID)" },
+                        "predicate": { "val": "sem:iri($ppfx || 'hasArtistName')" },
+                        "object": { "val": "xs:string(.)" }
+                    }
+                ]
+            },
+            {
+                "context": "*:released[fn:string-length(.) gt 0]",
+                "triples": [
+                    {
+                        "subject": { "val": "sem:iri($songID)" },
+                        "predicate": { "val": "sem:iri($ppfx || 'released')" },
+                        "object": { "val": "xs:string(.)" }
+                    }
+                ]
+            },
+            {
+                "context": "*:recorded[fn:string-length(.) gt 0]",
+                "triples": [
+                    {
+                        "subject": { "val": "sem:iri($songID)" },
+                        "predicate": { "val": "sem:iri($ppfx || 'recorded')" },
+                        "object": { "val": "xs:string(.)" }
+                    }
+                ]
+            },
+            {
+                "context": "*:label[fn:string-length(.) gt 0]",
+                "triples": [
+                    {
+                        "subject": { "val": "sem:iri($songID)" },
+                        "predicate": { "val": "sem:iri($ppfx || 'onLabel')" },
+                        "object": { "val": "sem:iri($labelID)" }
+                    },
+                    {
+                        "subject": { "val": "sem:iri($labelID)" },
+                        "predicate": { "val": "sem:iri($ppfx || 'hasLabelName')" },
+                        "object": { "val": "xs:string(.)" }
+                    }
+                ]
+            },
+            {
+                "context": "*:weeks/*:week[fn:string-length(.) gt 0]",
+                "rows": [
+                    {
+                        "schemaName": "music",
+                        "viewName":  "weeks",
+                        "columns": [
+                            {
+                                "name": "songID",
+                                "scalarType": "string",
+                                "val": "$docID"
+                            },
+                            {
+                                "name": "week",
+                                "scalarType": "date",
+                                "val": "."
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "context": "*:formats/*:format[fn:string-length(.) gt 0]",
+                "rows": [
+                    {
+                        "schemaName": "music",
+                        "viewName":  "formats",
+                        "columns": [
+                            {
+                                "name": "songID",
+                                "scalarType": "string",
+                                "val": "$docID"
+                            },
+                            {
+                                "name": "format",
+                                "scalarType": "string",
+                                "val": "."
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "context": "*:genres/*:genre[fn:string-length(.) gt 0]",
+                "rows": [
+                    {
+                        "schemaName": "music",
+                        "viewName":  "genres",
+                        "columns": [
+                            {
+                                "name": "songID",
+                                "scalarType": "string",
+                                "val": "$docID"
+                            },
+                            {
+                                "name": "genre",
+                                "scalarType": "string",
+                                "val": "."
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "context": "*:writers/*:writer[fn:string-length(.) gt 0]",
+                "rows": [
+                    {
+                        "schemaName": "music",
+                        "viewName":  "writers",
+                        "columns": [
+                            {
+                                "name": "songID",
+                                "scalarType": "string",
+                                "val": "$docID"
+                            },
+                            {
+                                "name": "writer",
+                                "scalarType": "string",
+                                "val": "."
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "context": "*:producers/*:producer[fn:string-length(.) gt 0]",
+                "rows": [
+                    {
+                        "schemaName": "music",
+                        "viewName":  "producers",
+                        "columns": [
+                            {
+                                "name": "songID",
+                                "scalarType": "string",
+                                "val": "$docID"
+                            },
+                            {
+                                "name": "producer",
+                                "scalarType": "string",
+                                "val": "."
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "context": "*:weeks/*:week[fn:string-length(.) gt 0]",
+                "triples": [
+                    {
+                        "subject": { "val": "sem:iri($songID)" },
+                        "predicate": { "val": "sem:iri($ppfx || 'weekInCharts')" },
+                        "object": { "val": "xs:date(.)" }
+                    }
+                ]
+            },
+            {
+                "context": "*:formats/*:format[fn:string-length(.) gt 0]",
+                "vars": [
+                    {
+                        "name": "formatID",
+                        "val": "'http://top-songs.com/entity/format#' || fn:replace(., '\\s+', '_')"
+                    }
+                ],
+                "triples": [
+                    {
+                        "subject": { "val": "sem:iri($songID)" },
+                        "predicate": { "val": "sem:iri($ppfx || 'hasRecordingFormat')" },
+                        "object": { "val": "sem:iri($formatID)" }
+                    },
+                    {
+                        "subject": { "val": "sem:iri($formatID)" },
+                        "predicate": { "val": "sem:iri($ppfx || 'hasRecordingFormatName')" },
+                        "object": { "val": "xs:string(.)" }
+                    }
+                ]
+            },
+            {
+                "context": "*:genres/*:genre[fn:string-length(.) gt 0]",
+                "vars": [
+                    {
+                        "name": "genreID",
+                        "val": "'http://top-songs.com/entity/genre#' || fn:replace(., '\\s+', '_')"
+                    }
+                ],
+                "triples": [
+                    {
+                        "subject": { "val": "sem:iri($songID)" },
+                        "predicate": { "val": "sem:iri($ppfx || 'hasMusicGenre')" },
+                        "object": { "val": "sem:iri($genreID)" }
+                    },
+                    {
+                        "subject": { "val": "sem:iri($genreID)" },
+                        "predicate": { "val": "sem:iri($ppfx || 'hasMusicGenreName')" },
+                        "object": { "val": "xs:string(.)" }
+                    }
+                ]
+            },
+            {
+                "context": "*:writers/*:writer[fn:string-length(.) gt 0]",
+                "vars": [
+                    {
+                        "name": "writerID",
+                        "val": "'http://top-songs.com/entity/writer#' || fn:replace(., '\\s+', '_')"
+                    }
+                ],
+                "triples": [
+                    {
+                        "subject": { "val": "sem:iri($songID)" },
+                        "predicate": { "val": "sem:iri($ppfx || 'hasSongWriter')" },
+                        "object": { "val": "sem:iri($writerID)" }
+                    },
+                    {
+                        "subject": { "val": "sem:iri($writerID)" },
+                        "predicate": { "val": "sem:iri($ppfx || 'hasSongWriterName')" },
+                        "object": { "val": "xs:string(.)" }
+                    }
+                ]
+            },
+            {
+                "context": "*:producers/*:producer[fn:string-length(.) gt 0]",
+                "vars": [
+                    {
+                        "name": "producerID",
+                        "val": "'http://top-songs.com/entity/producer#' || fn:replace(., '\\s+', '_')"
+                    }
+                ],
+                "triples": [
+                    {
+                        "subject": { "val": "sem:iri($songID)" },
+                        "predicate": { "val": "sem:iri($ppfx || 'hasProducer')" },
+                        "object": { "val": "sem:iri($producerID)" }
+                    },
+                    {
+                        "subject": { "val": "sem:iri($producerID)" },
+                        "predicate": { "val": "sem:iri($ppfx || 'hasProducerName')" },
+                        "object": { "val": "xs:string(.)" }
+                    }
+                ]
+            }
+        ]
+    }
+}

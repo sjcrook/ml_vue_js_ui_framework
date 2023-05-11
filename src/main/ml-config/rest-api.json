@@ -1,0 +1,12 @@
+{
+  "rest-api" : {
+    "name" : "%%mlAppName%%",
+    "group" : "%%GROUP%%",
+    "database" : "%%mlAppName%%",
+    "forests-per-host": 1,
+    "modules-database" : "%%mlAppName%%-modules",
+    "port" : "%%AppRestPort%%",
+    "xdbc-enabled" : true,
+    "error-format" : "json"
+  }
+}

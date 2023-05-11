@@ -1,0 +1,16 @@
+type completeSong @View(schemaName: "music", viewName: "song") {
+    ID: String
+    title: String
+    artist: String
+    album: String
+    label: String
+    weeks: [music_weeks] @Join(leftJoinColumn: "ID", rightJoinColumn: "songID")
+    formats: [music_formats] @Join(leftJoinColumn: "ID", rightJoinColumn: "songID")
+    genres: [music_genres] @Join(leftJoinColumn: "ID", rightJoinColumn: "songID")
+    writers: [music_writers] @Join(leftJoinColumn: "ID", rightJoinColumn: "songID")
+    producers: [music_producers] @Join(leftJoinColumn: "ID", rightJoinColumn: "songID")
+}
+
+type Query {
+    CompleteSong(ID: String, title: String, artist: String, album: String, label: String, weeks: [music_weeks], formats: [music_formats], genres: [music_genres], writers: [music_writers], producers: [music_producers]): [completeSong]
+}

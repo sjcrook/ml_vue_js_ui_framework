@@ -1,0 +1,49 @@
+{
+    "database-name" : "%%mlAppName%%",
+    "schema-database": "%%mlAppName%%-schemas",
+    "range-element-index" : [
+        {
+            "scalar-type" : "string",
+            "namespace-uri" : "http://marklogic.com/MLU/top-songs",
+            "localname" : "format",
+            "collation" : "http://marklogic.com/collation/",
+            "range-value-positions" : false,
+            "invalid-values" : "reject"
+        },
+        {
+            "scalar-type" : "string",
+            "namespace-uri" : "http://marklogic.com/MLU/top-songs",
+            "localname" : "artist",
+            "collation" : "http://marklogic.com/collation/en/S1/AS/T00BB",
+            "range-value-positions" : false,
+            "invalid-values" : "reject"
+        },
+        {
+            "scalar-type" : "string",
+            "namespace-uri" : "http://marklogic.com/MLU/top-songs",
+            "localname" : "genre",
+            "collation" : "http://marklogic.com/collation/en/S1/AS/T00BB",
+            "range-value-positions" : false,
+            "invalid-values" : "reject"
+        },
+        {
+            "scalar-type" : "string",
+            "namespace-uri" : "http://marklogic.com/MLU/top-songs",
+            "localname" : "title",
+            "collation" : "http://marklogic.com/collation/",
+            "range-value-positions" : false,
+            "invalid-values" : "reject"
+        }
+    ],
+    "range-element-attribute-index": [
+        {
+            "scalar-type" : "date",
+            "parent-namespace-uri" : "http://marklogic.com/MLU/top-songs",
+            "parent-localname": "weeks",
+            "namespace-uri": "",
+            "localname" : "last",
+            "range-value-positions" : false,
+            "invalid-values" : "reject"
+        }
+    ]
+}

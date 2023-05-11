@@ -1,0 +1,1 @@
+{"$optic":{"ns":"op", "fn":"operators", "args":[{"ns":"op", "fn":"from-sparql", "args":["\n    SELECT ?title ?artist \n    WHERE {\n        ?uri <http://top-songs.com/predicate#hasTitle> ?title;\n             <http://top-songs.com/predicate#hasArtist> ?artist;\n             <http://top-songs.com/predicate#hasArtist> @artistparam;\n    }\n    LIMIT 10"]}]}}

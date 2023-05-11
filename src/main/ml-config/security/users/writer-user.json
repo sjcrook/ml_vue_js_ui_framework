@@ -1,0 +1,5 @@
+{
+  "user-name" : "%%mlAppName%%-writer",
+  "password" : "password",
+  "role" : [ "%%mlAppName%%-writer" ]
+}

@@ -1,0 +1,28 @@
+plugins {
+    id "net.saliman.properties" version "1.5.1"
+    id "com.marklogic.ml-gradle" version "4.5.1"
+}
+
+repositories {
+    mavenCentral()
+    maven { url "https://developer.marklogic.com/maven2/" }
+}
+
+configurations {
+    mlcp
+}
+
+dependencies {
+    mlcp "com.marklogic:mlcp:11.0.2"
+}
+
+task loadData(type: com.marklogic.gradle.task.MlcpTask) {
+    classpath = configurations.mlcp
+    command = "IMPORT"
+    database = "framework"
+    port = 58000
+    input_file_path = "./data/songs.zip"
+    input_compressed = true
+    output_uri_replace = ".*/,'/songs/'"
+    output_permissions = "framework-reader,read"
+}

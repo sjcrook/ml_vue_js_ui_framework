@@ -1,0 +1,42 @@
+Docker compose file maps ports.  In this example, a 5 is prepended to the externally facing ports.  You may want to change these so as not to conflict with other MarkLogic instances running on the machine.  AppRestPort in gradle.properties should have the value of mlRestPort but without the preprended first digit.  For example, if mlRestPort is 58005, AppRestPort must be 8005.
+
+gradle.properties ml(Username|Password) should match docker-compose.yaml MARKLOGIC_ADMIN_(USERNAME|PASSWORD)
+
+# Stand up
+docker compose up -d
+# IMPORTANT - Wait 1 minute for MarkLogic to be initialized before continuing.
+
+# Bootstrap the database
+gradle mlDeploy -i
+
+# Load the top-songs data
+# build.gradle
+#     port - must be the same as mlAppServicesPort as defined in gradle.properties
+gradle loadData
+
+# Configure and start proxy (in a separate terminal window)
+cd proxy
+# .env
+#     PROXY_PORT - the port on which the proxy server accepts requests
+#     TARGET_HOST - the MarkLogic server to which requests are proxied
+#     TARGET_PORT - the MarkLogic server REST port to which requests are proxied
+#     USERNAME/PASSWORD
+			- credentials that can successfully authenticate against the MarkLogic REST instance - see ../src/main/ml-config/security/users
+			- best left blank and the user logs in manually
+npm install
+node proxy.js
+
+# Configure and start UI (in a separate terminal window)
+cd ui
+# .env
+#     VUE_APP_PROXY_HOST - host on which the proxy is running
+#     VUE_APP_PROXY_PORT - port on which the proxy is accepting connections
+#     VUE_APP_SEARCH_OPTIONS_STR_DEFAULT - the string that defines which search options are used
+npm install
+npm run serve --port=8080 # or whatever port on which you want to present the UI
+
+# Tear down
+docker compose down
+docker volume rm <project root directory>_framework
+# Delete node_modules directories in proxy/ and ui/
+

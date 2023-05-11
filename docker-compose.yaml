@@ -1,0 +1,15 @@
+#version: "3.7"
+services:
+    framework:
+        image: marklogicdb/marklogic-db
+        container_name: framework
+        environment:
+            - MARKLOGIC_INIT=true
+            - MARKLOGIC_ADMIN_USERNAME=admin
+            - MARKLOGIC_ADMIN_PASSWORD=admin
+        ports:
+            - "58000-58005:8000-8005"
+        volumes:
+            - framework:/var/opt/MarkLogic/
+volumes:
+    framework:
