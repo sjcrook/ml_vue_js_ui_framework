@@ -8,8 +8,7 @@
             dense
         >  
             <v-toolbar-title class="complement--text">
-                <span v-if="amountChecked > 0">{{ name }} ({{ amountChecked }})</span>
-                <span v-else>{{ capitalizeFacetName(name) }}</span>
+                <span>{{ capitalizeFacetName(name) }}</span> <span v-if="amountChecked > 0">({{ amountChecked }})</span>
             </v-toolbar-title>
             <v-spacer></v-spacer>  
             <v-btn

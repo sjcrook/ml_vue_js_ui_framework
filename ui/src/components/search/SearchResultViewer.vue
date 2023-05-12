@@ -31,20 +31,22 @@
                 <v-toolbar-title>Detail</v-toolbar-title>
             </v-toolbar>
             <v-container>
-                <v-row>
-                    <v-col>
-                        <div class="font-weight-medium"><span>URI</span>: {{ documentUri }}</div>
-                    </v-col>
-                </v-row>
-                <v-row>
-                    <v-col>
-                        <div>
-                            <pre v-if="documentType === 'json'" v-html="documentDataPrettyJSON"/>
-                            <pre v-if="documentType === 'xml'" v-html="documentDataPrettyXML"/>
-                            <pre v-if="documentType === 'txt'" v-html="highlightText"/>
-                        </div>
-                    </v-col>
-                </v-row>
+                <slot v-bind:container="container">
+                    <v-row>
+                        <v-col>
+                            <div class="font-weight-medium"><span>URI</span>: {{ container.documentUri }}</div>
+                        </v-col>
+                    </v-row>
+                    <v-row>
+                        <v-col>
+                            <div>
+                                <pre v-if="container.documentType === 'json'" v-html="container.documentDataPrettyJSON"/>
+                                <pre v-if="container.documentType === 'xml'" v-html="container.documentDataPrettyXML"/>
+                                <pre v-if="container.documentType === 'txt'" v-html="container.highlightText"/>
+                            </div>
+                        </v-col>
+                    </v-row>
+                </slot>
             </v-container>
         </v-card>
     </v-dialog>
@@ -182,7 +184,7 @@
             },
             documentDataPrettyJSON() {
                 if (this.documentGetStatus === 'got') {
-                    return JSON.stringify(this.highlightJSON(this.documentData, 6, this.uniqueMatches), null, 4).replace(/highlight_start/g, '<span class="highlight">').replace(/highlight_end/g, '</span>');
+                    return JSON.stringify(this.highlightJSON(this.documentData, 6, this.uniqueMatches), null, 4).replace(/highlight_start(.*?)highlight_end/g, '<span class="highlight">$1</span>');
                 } else {
                     return '{}';
                 }
@@ -191,16 +193,20 @@
                 if (this.documentGetStatus === 'got') {
                     const doc = (new DOMParser()).parseFromString(this.documentData, "application/xml");
                     this.highlightXML(doc, 10, this.uniqueMatches);    
-                    const highlightedXMLStr = this.prettifyXML(doc).replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/highlight_start/g, '<span class="highlight">').replace(/highlight_end/g, '</span>');
+                    const highlightedXMLStr = this.prettifyXML(doc).replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/highlight_start(.*?)highlight_end/g, '<span class="highlight">$1</span>');
                     return highlightedXMLStr;
                 } else {
                     return '</>';
                 }
             },
             highlightText() {
-                const regExpStr = '(' + this.uniqueMatches.join('|') + ')';
-                const re = new RegExp(regExpStr, 'g');
-                return this.documentData.replace(re, '<span class="highlight">$1</span>');
+                if (this.documentGetStatus === 'got') {
+                    const regExpStr = '(' + this.uniqueMatches.join('|') + ')';
+                    const re = new RegExp(regExpStr, 'g');
+                    return this.documentData.replace(re, '<span class="highlight">$1</span>');
+                } else {
+                    return '';
+                }
             },
             uniqueMatches() {
                 let result = [];
@@ -214,6 +220,15 @@
                     });
                 });
                 return result;
+            },
+            container() {
+                return {
+                    documentUri: this.documentUri,
+                    documentType: this.documentType,
+                    documentDataPrettyJSON: this.documentDataPrettyJSON,
+                    documentDataPrettyXML: this.documentDataPrettyXML,
+                    highlightText: this.highlightText
+                }
             }
         },
         watch: {

@@ -29,12 +29,12 @@
                     @change="setPayloadType($event)"
                 >
                     <v-radio
-                        label="Plan"
-                        value="json"
-                    ></v-radio>
-                    <v-radio
                         label="Javascript Query"
                         value="js"
+                    ></v-radio>
+                    <v-radio
+                        label="Plan"
+                        value="json"
                     ></v-radio>
                 </v-radio-group>
             </v-col>
@@ -160,28 +160,6 @@
         </v-row>
         <v-row>
             <v-col>
-<!--
-{
-    "columns": [
-        {
-            "name": "title"
-        },
-        {
-            "name": "artist"
-        }
-    ],
-    "rows": [
-        {
-            "title": {
-                "type": "xs:string",
-                "value": "Heartache Tonight"
-            },
-            "artist": {
-                "type": "xs:string",
-                "value": "Eagles"
-            }
-        },
--->
                 <v-simple-table
                     v-if="results && localResponseFormat === 'application/json' && displayAsTable"
                 >
@@ -256,16 +234,22 @@
             }
         },
         mounted() {
-            //this.setQuery('SELECT ?s ?p ?o WHERE { ?s ?p ?o . } LIMIT 10');
             this.localResponseFormat = this.responseFormat;
+            this.name = 'artistparam';
+            this.value = 'Eagles';
+            this.addBinding();
+            this.$store.dispatch('rows/setPayload', `op.fromSPARQL(\`
+    SELECT ?songTitle ?artistName
+    WHERE {
+        ?songID <http://top-songs.com/predicate#hasSongTitle> ?songTitle;
+                <http://top-songs.com/predicate#writtenBy> ?artistID .
+        ?artistID <http://top-songs.com/predicate#hasArtistName> ?artistName;
+                  <http://top-songs.com/predicate#hasArtistName> ?artistparam .
+    }
+    LIMIT 10
+\`)`);
         },
         methods: {
-/*
-                data: undefined,
-                dataType: undefined,
-                bindings: {},
-                optimize: 0, // 1 or 2
-*/
             setPayload(value) {
                 this.$store.dispatch('rows/setPayload', value);
             },

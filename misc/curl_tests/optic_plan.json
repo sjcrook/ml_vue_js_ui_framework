@@ -1,1 +1,15 @@
-{"$optic":{"ns":"op", "fn":"operators", "args":[{"ns":"op", "fn":"from-sparql", "args":["\n    SELECT ?title ?artist \n    WHERE {\n        ?uri <http://top-songs.com/predicate#hasTitle> ?title;\n             <http://top-songs.com/predicate#hasArtist> ?artist;\n             <http://top-songs.com/predicate#hasArtist> @artistparam;\n    }\n    LIMIT 10"]}]}}
+{
+    "$optic": {
+        "ns": "op",
+        "fn": "operators",
+        "args": [
+            {
+                "ns": "op",
+                "fn": "from-sparql",
+                "args": [
+                    " SELECT ?songTitle ?artistName\nWHERE {\n?songID <http://top-songs.com/predicate#hasSongTitle> ?songTitle;\n<http://top-songs.com/predicate#writtenBy> ?artistID .\n?artistID <http://top-songs.com/predicate#hasArtistName> ?artistName;\n<http://top-songs.com/predicate#hasArtistName> ?artistparam .\n}\nLIMIT 10"
+                ]
+            }
+        ]
+    }
+}

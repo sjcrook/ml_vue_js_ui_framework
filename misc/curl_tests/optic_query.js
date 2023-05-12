@@ -1,8 +1,10 @@
 op.fromSPARQL(`
-    SELECT ?title ?artist 
+    SELECT ?songTitle ?artistName
     WHERE {
-        ?uri <http://top-songs.com/predicate#hasTitle> ?title;
-             <http://top-songs.com/predicate#hasArtist> ?artist;
-             <http://top-songs.com/predicate#hasArtist> @artistparam;
+        ?songID <http://top-songs.com/predicate#hasSongTitle> ?songTitle;
+                <http://top-songs.com/predicate#writtenBy> ?artistID .
+        ?artistID <http://top-songs.com/predicate#hasArtistName> ?artistName;
+                  <http://top-songs.com/predicate#hasArtistName> ?artistparam .
     }
-    LIMIT 10`)
+    LIMIT 10
+`)

@@ -10,14 +10,16 @@
             <v-container>
                 <v-row dense>
                     <v-col class="d-flex justify-end">
-                        <search-result-viewer
-                            class="d-flex justify-end"
-                            :document-uri="item.uri"
-                            :matches="item.matches"
-                        />
+                        <slot name="resultDetail" v-bind:item="item">
+                            <search-result-viewer
+                                class="d-flex justify-end"
+                                :document-uri="item.uri"
+                                :matches="item.matches"
+                            />
+                        </slot>
                     </v-col>
                 </v-row>
-                <slot v-bind:item="item">
+                <slot name="resultSummary" v-bind:item="item">
                     <v-row dense>
                         <v-col>
                             {{ niceDocumentURI(item.uri) }}

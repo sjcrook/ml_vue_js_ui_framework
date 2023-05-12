@@ -43,8 +43,33 @@
                 <v-row v-if="results.total > 0">
                     <v-col>
                         <search-results-viewer>
-                            <!-- Default slot in case one wants to change the default result rendering -->
-                            <!--template v-slot:default="{ item }">
+                            <!-- Uncomment to override result detail page -->
+                            <!--template v-slot:resultDetail="{ item }">
+                                <search-result-viewer
+                                    class="d-flex justify-end"
+                                    :document-uri="item.uri"
+                                    :matches="item.matches"
+                                >
+                                    <template v-slot:default="{ container }">
+                                        <v-row>
+                                            <v-col>
+                                                <div class="font-weight-medium"><span>XXXURI</span>: {{ container.documentUri }}</div>
+                                            </v-col>
+                                        </v-row>
+                                        <v-row>
+                                            <v-col>
+                                                <div>
+                                                    <pre v-if="container.documentType === 'json'" v-html="container.documentDataPrettyJSON"/>
+                                                    <pre v-if="container.documentType === 'xml'" v-html="container.documentDataPrettyXML"/>
+                                                    <pre v-if="container.documentType === 'txt'" v-html="container.highlightText"/>
+                                                </div>
+                                            </v-col>
+                                        </v-row>
+                                    </template>
+                                </search-result-viewer>
+                            </template-->
+                            <!-- Uncomment to override result summary card -->
+                            <!--template v-slot:resultSummary="{ item }">
                                 <v-row dense>
                                     <v-col>
                                         URI: {{ item.uri }}
@@ -91,6 +116,7 @@
     import SearchPageLengthSetter from "../components/search/SearchPageLengthSetter";
     import SearchPaginator from "../components/search/SearchPaginator";
     import SearchResultsViewer from "../components/search/SearchResultsViewer";
+    import SearchResultViewer from "../components/search/SearchResultViewer";
     import SearchSortState from "../components/search/SearchSortState";
 
     export default {
@@ -102,6 +128,7 @@
             SearchPageLengthSetter,
             SearchPaginator,
             SearchResultsViewer,
+            SearchResultViewer,
             SearchSortState
         },
         data() {
@@ -151,3 +178,11 @@
     }
 
 </script>
+
+<style scoped>
+    pre >>> .highlight {
+        background-color: yellow;
+        font-style: italic;
+        font-weight: bold;
+    }
+</style>

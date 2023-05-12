@@ -9,7 +9,7 @@ export const rowsState = (function() {
 			namespaced: true,
 			state: {
                 payload: undefined,
-                payloadType: 'json',
+                payloadType: 'js',
                 bindings: {},
                 optimize: 0, // 1 or 2
                 responseFormat: 'application/json',

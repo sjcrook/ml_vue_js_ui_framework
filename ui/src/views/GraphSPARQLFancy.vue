@@ -45,6 +45,10 @@
                 ]
             }
         },
+        beforeMount() {
+            this.$store.dispatch('graphsSPARQL/clearResults');
+            this.$store.dispatch('graphsSPARQL/setResponseFormat', 'application/json');
+        },
         mounted() {
             this.$store.dispatch('graphsSPARQL/setQuery',
                 `PREFIX art: <http://top-songs.com/entity/artist#>
@@ -73,7 +77,6 @@
                 }`
             );
 
-            this.$store.dispatch('graphsSPARQL/clearResults');
             this.$store.dispatch('graphsSPARQL/executeQuery')
                 .then((response) => {})
                 .catch((error) => { console.log(error); })
