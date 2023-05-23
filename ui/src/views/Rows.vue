@@ -235,19 +235,26 @@
         },
         mounted() {
             this.localResponseFormat = this.responseFormat;
-            this.name = 'artistparam';
-            this.value = 'Eagles';
-            this.addBinding();
-            this.$store.dispatch('rows/setPayload', `op.fromSPARQL(\`
-    SELECT ?songTitle ?artistName
-    WHERE {
-        ?songID <http://top-songs.com/predicate#hasSongTitle> ?songTitle;
-                <http://top-songs.com/predicate#writtenBy> ?artistID .
-        ?artistID <http://top-songs.com/predicate#hasArtistName> ?artistName;
-                  <http://top-songs.com/predicate#hasArtistName> ?artistparam .
-    }
-    LIMIT 10
-\`)`);
+            if (this.$store.state.rows.payload === undefined) {
+                console.log('payload', this.$store.state.rows);
+                this.name = 'artistparam';
+                this.value = 'Eagles';
+                this.addBinding();
+                this.$store.dispatch('rows/setPayload',
+                    [
+                        'op.fromSPARQL("',
+                        '    SELECT ?songTitle ?artistName',
+                        '    WHERE {',
+                        '        ?songID <http://top-songs.com/predicate#hasSongTitle> ?songTitle;',
+                        '                <http://top-songs.com/predicate#writtenBy> ?artistID .',
+                        '        ?artistID <http://top-songs.com/predicate#hasArtistName> ?artistName;',
+                        '                  <http://top-songs.com/predicate#hasArtistName> ?artistparam .',
+                        '    }',
+                        '    LIMIT 10',
+                        '")'
+                    ].join('\n')
+                );
+            }
         },
         methods: {
             setPayload(value) {

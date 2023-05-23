@@ -19,7 +19,7 @@ function createDigest(opts) {
     if (!((_a = opts.responseHeaders["www-authenticate"]) === null || _a === void 0 ? void 0 : _a.includes('nonce'))) {
         return false;
     }
-    const authDetails = opts.responseHeaders['www-authenticate'].replaceAll(', ', ',').split(',').map(item => {
+    const authDetails = opts.responseHeaders['www-authenticate'].replace(/, /g, ',').split(',').map(item => {
         const eqPos = item.indexOf('=');
         return [ item.substring(0, eqPos), item.substring(eqPos + 1) ];
     });

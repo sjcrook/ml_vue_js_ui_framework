@@ -49,21 +49,25 @@
         },
         mounted() {
             //this.setQuery('SELECT ?s ?p ?o WHERE { ?s ?p ?o . } LIMIT 10');
-            this.setQuery(
-                `query topSongsQuery {
-                    CompleteSong(first: 10, offset: 0) @Sort(field:artist, direction: Descending) {
-                        title 
-                        artist 
-                        album 
-                        label 
-                        weeks { week } 
-                        formats { format } 
-                        genres { genre } 
-                        writers { writer } 
-                        producers { producer }
-                    }
-                }`
-            );
+            if (this.$store.state.graphQL.query === undefined) {
+                this.setQuery(
+                    [
+                        'query topSongsQuery {',
+                        '    CompleteSong(first: 10, offset: 0) @Sort(field:artist, direction: Descending) {',
+                        '        title',
+                        '        artist',
+                        '        album', 
+                        '        label', 
+                        '        weeks { week }',
+                        '        formats { format }',
+                        '        genres { genre }',
+                        '        writers { writer }',
+                        '        producers { producer }',
+                        '    }',
+                        '}'
+                    ].join('\n')
+                );
+            }
         },
         methods: {
             setQuery(value) {

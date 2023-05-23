@@ -183,8 +183,10 @@
             }
         },
         mounted() {
-            this.setQuery('SELECT ?s ?p ?o WHERE { ?s ?p ?o . } LIMIT 10');
             this.localResponseFormat = this.responseFormat;
+            if (this.$store.state.graphsSPARQL.query === undefined) {
+                this.setQuery('SELECT ?s ?p ?o WHERE { ?s ?p ?o . } LIMIT 10');
+            }
         },
         methods: {
             setQuery(value) {
