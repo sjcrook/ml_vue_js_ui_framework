@@ -10,6 +10,11 @@
 
 <script>
 
+    /*
+        This is the top level of the Vue rendering hierarchy.
+        The router-view component renders the pages.
+    */
+
     import MasterSnackBar from "../components/MasterSnackBar";
 
     export default {

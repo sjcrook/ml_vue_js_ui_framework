@@ -34,6 +34,7 @@
         methods: {
         },
         computed: {
+            // Get  data from Vuex persistence layer
             ...mapState({
                 results: state => state.search.results
             }),

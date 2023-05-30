@@ -5,6 +5,13 @@ import { store } from '../local.js';
 
 Vue.use(VueRouter);
 
+/*
+	Prior to going to the specified route, check login status.
+	If undefined, get login status from the proxy.
+	If authenticated, proceed.
+	If not authenticated and route requires authentication, re-route to login page.
+	If not authenticated and route doesn't require authentication, proceed.
+*/
 const checkLogin = (to, from, next) => {
 	if (to.name === 'error') {
 		next();

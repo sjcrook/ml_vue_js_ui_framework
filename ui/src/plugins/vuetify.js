@@ -3,6 +3,7 @@ import Vuetify from 'vuetify/lib/framework';
 
 Vue.use(Vuetify);
 
+// Define the material design light and dark color schemes used by Vuetify
 const theme = {
     dark: false,
     themes: {

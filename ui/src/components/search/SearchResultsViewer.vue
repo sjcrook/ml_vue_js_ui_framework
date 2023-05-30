@@ -11,6 +11,7 @@
                 <v-row dense>
                     <v-col class="d-flex justify-end">
                         <slot name="resultDetail" v-bind:item="item">
+                            <!-- Render result detail -->
                             <search-result-viewer
                                 class="d-flex justify-end"
                                 :document-uri="item.uri"
@@ -69,6 +70,7 @@
                 return uri.substr(0, MAX_URI_STARTER_LENGTH) + '.../' + uri.replace(/.*\//, '');
             },
             matchText(matchTextArr) {
+                // Convert the match-text array into a string with highlighted text
                 let result = '';
                 matchTextArr.forEach(item => {
                     if (typeof item === 'string') {
@@ -87,6 +89,7 @@
             }
         },
         computed: {
+            // Get  data from Vuex persistence layer
             ...mapState({
                 results: state => state.search.results
             })

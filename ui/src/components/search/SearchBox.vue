@@ -18,6 +18,7 @@
             @keydown.tab="keyTab()"
         ></v-text-field>
 
+        <!-- A v-card to show type-ahead suggestions underneath the search box -->
         <v-card
             v-if="typeAheadSuggestions.length > 0"
             max-width="400"
@@ -62,26 +63,42 @@
                 typeAheadSuggestions: [],
                 selectedSuggestionIndex: -1,
                 blockSuggestionRefresh: false,
+                /*
+
+                    The following two flags determine whether a change occurred
+                    inside or outside a component so as to prevent infinite update loops.
+                */
                 setInternally: false,
                 setExternally: false
             }
         },
         mounted() {
+            /*
+                Type-ahead suggestions are only to be refreshed when the user types
+                into the search box.  Otherwise, block the refresh.
+            */
             this.blockSuggestionRefresh = true;
+            // Get the qText from the Vuex persistence layer
             this.qTextInternal = this.qText;
         },
         methods: {
             updateQText() {
-                this.$store.dispatch('search/setQText', this.qTextInternal === null ? '' : this.qTextInternal);
+                /*
+                    Upon each keypress, clear the type-ahead suggestions, reset the type-ahead selectedSuggestionIndex
+                    and set the qText in the Vuex persistence layer.
+                */
                 this.typeAheadSuggestions = [];
                 this.selectedSuggestionIndex = -1;                
+                this.$store.dispatch('search/setQText', this.qTextInternal === null ? '' : this.qTextInternal);
             },
             clearAndUpdate() {
                 this.blockSuggestionRefresh = true;
-                //this.qTextInternal = '';
                 this.updateQText();
             },
             keyUp() {
+                /*
+                    Change the selected/highlighted item in the type-ahead suggestions list
+                */
                 if (this.selectedSuggestionIndex === -1) {
                     this.selectedSuggestionIndex = this.typeAheadSuggestions.length - 1;
                 } else {
@@ -89,9 +106,16 @@
                 }
             },
             keyDown() {
+                /*
+                    Change the selected/highlighted item in the type-ahead suggestions list
+                */
                 this.selectedSuggestionIndex = (this.selectedSuggestionIndex + 1) % this.typeAheadSuggestions.length;
             },
             keyTab() {
+                /*
+                    If a type-ahead suggestion has been selected and the user hits the tab key,
+                    set the suggestion as the value for qTextInternal.
+                */
                 if (this.selectedSuggestionIndex !== -1) {
                     this.blockSuggestionRefresh = true;
                     this.qTextInternal = this.typeAheadSuggestions[this.selectedSuggestionIndex];
@@ -101,16 +125,25 @@
             }
         },
         computed: {
+            // Get  data from Vuex persistence layer
             ...mapState({
                 qText: state => state.search.qText
             })
         },
         watch: {
+            // Watcher for external representation of qText
             qText(value) {
                 if (!this.setInternally) {
+                    /*
+                        The Vuex prop, qText, has been set outside of this component to assign it to
+                        the internal value
+                    */
                     this.qTextInternal = value;
                     this.setExternally = true;
                 } else {
+                    /*
+                        The Vuex prop, qText, has been set internally (via user interaction) so execute the search.
+                    */
                     this.setInternally = false;
                     this.$store.dispatch('search/executeSearch')
                         .then((response) => {})
@@ -118,11 +151,14 @@
                         .finally(() => {});
                 }                
             },
+            // Watcher for internal representation of qText
             qTextInternal(value) {
                 if (!this.setExternally) {
+                    // The value has been set internally (via user interaction).
                     if (this.blockSuggestionRefresh) {
                         this.blockSuggestionRefresh = false;
                     } else {
+                        // Get type-ahead suggetions.
                         if (this.typeAheadSuggestionsFunction !== undefined) {
                             this.typeAheadSuggestions = this.typeAheadSuggestionsFunction(value);
                             this.selectedSuggestionIndex = -1;

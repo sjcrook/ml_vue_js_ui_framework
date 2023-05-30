@@ -32,6 +32,7 @@
         },
         data() {
             return {
+                // Determines the text, background color, and radius of the nodes.
                 map: [
                     { iriPfx: "http://top-songs.com/entity/song", iriShortPfx: "sng", color: "red", textColor: "white", radius: 15 },
                     { iriPfx: "http://top-songs.com/entity/album", iriShortPfx: "alb", color: "blue", textColor: "white", radius: 15 },
@@ -83,6 +84,7 @@
                 .finally(() => {});
         },
         computed: {
+            // Get  data from Vuex persistence layer
             ...mapState({
                 results: state => state.graphsSPARQL.results,
                 submissionStatus: state => state.graphsSPARQL.submissionStatus,

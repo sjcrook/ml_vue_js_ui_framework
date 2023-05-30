@@ -81,6 +81,8 @@
 
 <script>
 
+    // Renders authenticated pages.
+
     import { APP_CONFIG, store } from '../local.js';
 
     //import FacetChipViewer from "../components/FacetChipViewer";

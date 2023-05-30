@@ -7,6 +7,10 @@
                 cols="4"
             >
                 <!-- facets -->
+                <!--
+                    If there are no chips, move the row up a little so that
+                    the top of the first facet card is level with the search box.
+                -->
                 <v-row
                     :class="{ 'mt-n6': chipCount === 0 }"
                 >
@@ -147,6 +151,7 @@
             }
         },
         computed: {
+            // Get  data from Vuex persistence layer
             ...mapState({
                 results: state => state.search.results,
                 submissionStatus: state => state.search.submissionStatus,

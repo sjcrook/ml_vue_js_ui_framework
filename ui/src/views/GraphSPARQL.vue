@@ -217,6 +217,7 @@
             }
         },
         computed: {
+            // Get  data from Vuex persistence layer
             ...mapState({
                 query: state => state.graphsSPARQL.query,
                 bindings: state => state.graphsSPARQL.bindings,

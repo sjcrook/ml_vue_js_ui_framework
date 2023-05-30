@@ -19,6 +19,7 @@ const graphsSPARQL = new graphsSPARQLState();
 const rows = new rowsState();
 const search = new searchState();
 
+// Register the modules wiyh the Vue Store.
 export default new Vuex.Store({
     modules: {
         auth,

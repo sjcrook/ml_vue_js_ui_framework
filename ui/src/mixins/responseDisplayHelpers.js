@@ -8,6 +8,7 @@ export default {
     },
     methods: {
         prettifyXML(doc) {
+            // Prettify an XML document using a XSL template.
             const xsltDocStr =
                 // https://www.delightfulcomputing.com/xslfaq/xsl/sect2/pretty.html
                 `<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">

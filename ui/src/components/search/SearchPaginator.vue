@@ -6,6 +6,7 @@
                 <span
                     v-for="(item, index) in internalPageDetails" :key="'sp-' + index"
                 >
+                    <!-- Either render a paginator icon or the page number -->
                     <v-tooltip
                         v-if="typeof item.value === 'string'"
                         bottom
@@ -54,12 +55,17 @@
         created() {
         },
         mounted() {
+            // Copy the search results data to an internal representation, internalPageDetails
             this.copyResultsToInternal();
         },
         beforeDestroy() {
         },
         methods: {
             copyResultsToInternal() {
+                /*
+                    Create the internal representation, internalPageDetails (an array), that
+                    will be used to to render the paginator on the screen.
+                */
                 this.internalPageDetails = [];
                 if (this.results.total > 0) {
                     const total = this.results.total;
@@ -68,6 +74,10 @@
                     const currentPage = (start + pageLength - 1)/pageLength;
                     const totalPages = Math.ceil(total/pageLength);
                     const maxPageStart = totalPages * pageLength - pageLength + 1;
+                    /*
+                        Set hte min and max page numbers to display based on total number of
+                        page to display (APP_CONFIG.MAX_ENUMERATED_PAGES)
+                    */
                     const minPage = Math.min(
                         Math.max(1, currentPage - (APP_CONFIG.MAX_ENUMERATED_PAGES - 1)/2), // handles bottom end
                         Math.max(1, totalPages - APP_CONFIG.MAX_ENUMERATED_PAGES + 1) // handles top end
@@ -79,16 +89,19 @@
 
                     if (total > pageLength) {
                         if (currentPage > 1) {
+                            // Add the start icons
                             this.internalPageDetails.push({ value: 'mdi-skip-previous-outline', start: 1 });
                             this.internalPageDetails.push({ value: 'mdi-chevron-double-left', start: Math.max(1, start - pageLength * APP_CONFIG.MAX_ENUMERATED_PAGES) });
                             this.internalPageDetails.push({ value: 'mdi-chevron-left', start: (start - pageLength) });
                         }
 
+                        // Add the page numbers
                         for (let p = minPage; p <= maxPage; p++) {
                             this.internalPageDetails.push({ value: p, start: (p * pageLength - pageLength + 1), current: p === currentPage });
                         }
 
                         if (currentPage < totalPages) {
+                            // Add the end icons
                             this.internalPageDetails.push({ value: 'mdi-chevron-right', start: (start + pageLength) });
                             this.internalPageDetails.push({ value: 'mdi-chevron-double-right', start: Math.min(maxPageStart, start + pageLength * APP_CONFIG.MAX_ENUMERATED_PAGES) });
                             this.internalPageDetails.push({ value: 'mdi-skip-next-outline', start: maxPageStart });
@@ -97,9 +110,11 @@
                 }
             },
             updateStart(start) {
+                // Set/update the page start value in the Vuex persistence layer
                 this.$store.dispatch('search/setStart', start);
             },
             getLabel(mdi) {
+                //  Determine which tooltip to return.
                 switch (mdi) {
                     case 'mdi-skip-previous-outline': return 'first page';
                     case 'mdi-chevron-double-left': return 'previous set of pages';
@@ -120,10 +135,12 @@
             results: {
                 deep: true,
                 handler(value) {
+                    // When the search results change, update the internal representation.
                     this.copyResultsToInternal();
                 }
             },
             start(value) {
+                // When start changes, execute the search
                 this.$store.dispatch('search/executeSearch')
                     .then((response) => {})
                     .catch((error) => { console.log(error); })

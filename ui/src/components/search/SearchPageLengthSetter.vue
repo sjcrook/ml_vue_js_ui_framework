@@ -33,6 +33,7 @@
         methods: {
         },
         computed: {
+            // Get  data from Vuex persistence layer
             ...mapState({
                 pageLength: state => state.search.pageLength
             })
@@ -42,6 +43,9 @@
                 this.internalValue = value;
             },
             internalValue(value) {
+                /* When internalValue changes (via user input), set the value in the Vuex 
+                   persistence layer and execute the search
+                */
                 this.$store.dispatch('search/setPageLength', value);
                 this.$store.dispatch('search/executeSearch')
                     .then((response) => {})

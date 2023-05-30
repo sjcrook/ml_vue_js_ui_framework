@@ -91,6 +91,7 @@
             },
         },
         computed: {
+            // Get  data from Vuex persistence layer
             ...mapState({
                 submissionStatus: state => state.auth.submissionStatus,
                 AJAXResponseStatus: state => state.auth.AJAXResponseStatus,

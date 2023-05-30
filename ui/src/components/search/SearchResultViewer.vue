@@ -85,6 +85,7 @@
         },
         methods: {
             documentGet() {
+                // Get the document content into the Vuex persistence layer.
                 this.$store.dispatch('documentManagement/setDocumentURI', this.documentUri);
                 let that = this;
                 this.$store.dispatch('documentManagement/documentGet')
@@ -99,6 +100,7 @@
             },
             highlightJSON(entity = {}, levelsDown = 3, matches = [], replacementString = 'highlight_start$1highlight_end') {  
                 function walkTree(entity, levelsDown) {
+                    // Walk the JSON object and add highlight placeholder strings around text to be highlighted.
                     if (levelsDown === 0) {
                         return 'pruned';
                     }
@@ -138,6 +140,7 @@
                 return walkTree(entity, levelsDown);
             },
             highlightXML(node, levelsDown = 3, matches = [], replacementString = 'highlight_start$1highlight_end') {
+                // Walk the XML document and add highlight placeholder strings around text to be highlighted.
                 if (matches.length > 0) {
                     const regExpStr = '(' + matches.join('|') + ')';
                     const re = new RegExp(regExpStr, 'g');
@@ -158,6 +161,7 @@
             }
         },
         computed: {
+            // Get  data from Vuex persistence layer
             ...mapState({
                 documentData: state => state.documentManagement.documentData,
                 submissionStatus: state => state.documentManagement.submissionStatus,
@@ -172,6 +176,7 @@
                 }
             },
             documentTypeIcon() {
+                // Determine which icon to display based on the document type.
                 if (this.documentType === 'json') {
                     return 'code-json';
                 } else if (this.documentType === 'xml') {
@@ -191,6 +196,7 @@
             },
             documentDataPrettyXML() {
                 if (this.documentGetStatus === 'got') {
+                    // Parse the XML string into a node structure.
                     const doc = (new DOMParser()).parseFromString(this.documentData, "application/xml");
                     this.highlightXML(doc, 10, this.uniqueMatches);    
                     const highlightedXMLStr = this.prettifyXML(doc).replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/highlight_start(.*?)highlight_end/g, '<span class="highlight">$1</span>');
@@ -209,6 +215,7 @@
                 }
             },
             uniqueMatches() {
+                // Return a list unique text matches.
                 let result = [];
                 this.matches.forEach(item => {
                     item['match-text'].forEach(item2 => {

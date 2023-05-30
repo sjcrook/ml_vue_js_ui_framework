@@ -48,7 +48,6 @@
             }
         },
         mounted() {
-            //this.setQuery('SELECT ?s ?p ?o WHERE { ?s ?p ?o . } LIMIT 10');
             if (this.$store.state.graphQL.query === undefined) {
                 this.setQuery(
                     [
@@ -84,6 +83,7 @@
             }
         },
         computed: {
+            // Get  data from Vuex persistence layer
             ...mapState({
                 query: state => state.graphQL.query,
                 results: state => state.graphQL.results,

@@ -46,14 +46,21 @@
             }
         },
         created() {
+            // listen for addSnackBar events
             eventHandler.listen('masterSnackBar', this.addSnackBar);
         },
         beforeDestroy() {
+            // stop listening for addSnackBar events
             eventHandler.stopListening('masterSnackBar', this.addSnackBar);
         },
         methods: {
             addSnackBar(data) {
+                /*
+                    Push the data for the snackbar onto the snackbar array
+                    which is rendered by the template.
+                */
                 let that = this;
+                // The id is used to identify the snackbar upon removal
                 let id = parseInt(Math.random() * 1000000);
                 this.snackBarList.push({
                     id: id,
@@ -66,6 +73,7 @@
                 });
             },
             removeSnackBar(id) {
+                // Find the snackbar by id and remove from array.
                 let index = this.snackBarList.findIndex(item => item.id === id);
                 if (index !== -1) {
                     clearTimeout(this.snackBarList[index].timeoutID);
@@ -73,6 +81,11 @@
                 }
             },
             calcMargin(i) {
+                /*
+                    Multiple snackbars can be visible at once.  This function determines
+                    the margin height so for each one in the array so that they don't
+                    overlay each other.
+                */
                 return ((this.snackBarList.length - i - 1) * 70) + 'px';
             }
         }

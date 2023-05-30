@@ -70,6 +70,8 @@
 
 <script>
 
+    // Renders guest pages.
+
     import { APP_CONFIG } from '../local.js';
 
     //import FacetChipViewer from "../components/FacetChipViewer";

@@ -286,6 +286,7 @@
             }
         },
         computed: {
+            // Get  data from Vuex persistence layer
             ...mapState({
                 payload: state => state.rows.payload,
                 payloadType: state => state.rows.payloadType,
@@ -297,6 +298,7 @@
                 AJAXResponseStatus: state => state.rows.AJAXResponseStatus
             }),
             bindingsLocal() {
+                // Convert bindings object to an array of bindings used in the rendering.
                 const bindings = [];
                 for (const [pName, pObj] of Object.entries(this.bindings)) {
                     bindings.push({ name: pName, ...pObj });

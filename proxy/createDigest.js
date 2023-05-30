@@ -4,6 +4,8 @@ const crypto = require("crypto");
 const url = require("url");
 
 /*
+    Create a digest header from the data passed in.
+
     opts = {
         responseHeaders: {},
         url: '/a/b/c',
