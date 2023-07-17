@@ -61,24 +61,30 @@ export const searchState = (function() {
 			actions: {
                 setQText({ commit }, qText) {
                     commit('setQText', qText);
+                    commit('setStart', 1);
                 },
                 setStructuredQuery({ commit }, structuredQuery) {
                     commit('setStructuredQuery', structuredQuery);
+                    commit('setStart', 1);
                 },
                 setStart({ commit }, start) {
                     commit('setStart', start);
                 },
                 setPageLength({ commit }, pageLength) {
                     commit('setPageLength', pageLength);
+                    commit('setStart', 1);
                 },
                 setOptionsStr({ commit }, optionsStr) {
                     commit('setOptionsStr', optionsStr);
+                    commit('setStart', 1);
                 },
                 setOptions({ commit }, options) {
                     commit('setOptions', options);
+                    commit('setStart', 1);
                 },
                 setSortState({ commit }, sortState) {
                     commit('setSortState', sortState);
+                    commit('setStart', 1);
                 },
                 executeSearch({ commit, state }) {
                     commit("clearSubmissionError");

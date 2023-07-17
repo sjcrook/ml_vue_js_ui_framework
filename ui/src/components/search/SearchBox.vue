@@ -135,7 +135,7 @@
             qText(value) {
                 if (!this.setInternally) {
                     /*
-                        The Vuex prop, qText, has been set outside of this component to assign it to
+                        The Vuex prop, qText, has been set outside of this component so assign it to
                         the internal value
                     */
                     this.qTextInternal = value;
