@@ -2,6 +2,7 @@
 
     <div>
         <v-text-field
+            ref="searchbox"
             v-model="qTextInternal"
             outlined
             hide-details
@@ -15,7 +16,7 @@
             @keydown.enter="updateQText()"
             @keydown.up="keyUp()"
             @keydown.down="keyDown()"
-            @keydown.tab="keyTab()"
+            @keydown.tab="keyTab($event)"
         ></v-text-field>
 
         <!-- A v-card to show type-ahead suggestions underneath the search box -->
@@ -30,6 +31,7 @@
                 >
                     <v-list-item
                         v-for="(item, index) in typeAheadSuggestions" :key="'typeAheadSuggestion-' + index"
+                        @click="typeAheadSuggestionsClick($event, index)"
                     > 
                         <v-list-item-content>
                             <v-list-item-title>{{item}}</v-list-item-title>
@@ -111,7 +113,8 @@
                 */
                 this.selectedSuggestionIndex = (this.selectedSuggestionIndex + 1) % this.typeAheadSuggestions.length;
             },
-            keyTab() {
+            keyTab(evt) {
+                evt.preventDefault();   
                 /*
                     If a type-ahead suggestion has been selected and the user hits the tab key,
                     set the suggestion as the value for qTextInternal.
@@ -122,6 +125,11 @@
                     this.typeAheadSuggestions = [];
                     this.selectedSuggestionIndex = -1;
                 }
+            },
+            typeAheadSuggestionsClick(evt, index) {
+                this.selectedSuggestionIndex = index;
+                this.$refs.searchbox.$refs.input.focus();
+                this.keyTab(evt);
             }
         },
         computed: {

@@ -47,47 +47,75 @@
                 <v-row v-if="results.total > 0">
                     <v-col>
                         <search-results-viewer>
-                            <!-- Uncomment to override result detail page -->
-                            <!--template v-slot:resultDetail="{ item }">
+                            <!--template v-slot:resDetail="{ item }">
                                 <search-result-viewer
                                     class="d-flex justify-end"
                                     :document-uri="item.uri"
                                     :matches="item.matches"
                                 >
-                                    <template v-slot:default="{ container }">
-                                        <v-row>
-                                            <v-col>
-                                                <div class="font-weight-medium"><span>XXXURI</span>: {{ container.documentUri }}</div>
-                                            </v-col>
-                                        </v-row>
-                                        <v-row>
-                                            <v-col>
-                                                <div>
-                                                    <pre v-if="container.documentType === 'json'" v-html="container.documentDataPrettyJSON"/>
-                                                    <pre v-if="container.documentType === 'xml'" v-html="container.documentDataPrettyXML"/>
-                                                    <pre v-if="container.documentType === 'txt'" v-html="container.highlightText"/>
-                                                </div>
-                                            </v-col>
-                                        </v-row>
+                                    <template v-slot:default="{ resDetail }">
+                                        <v-container>
+                                            <v-row>
+                                                <v-col>
+                                                    <div class="font-weight-medium"><span>XURI</span>: {{ resDetail.documentUri }}</div>
+                                                </v-col>
+                                            </v-row>
+                                            <v-row>
+                                                <v-col>
+                                                    <div v-html="displayData(resDetail)"></div>
+                                                </v-col>
+                                            </v-row>
+                                        </v-container>
                                     </template>
                                 </search-result-viewer>
                             </template-->
-                            <!-- Uncomment to override result summary card -->
-                            <!--template v-slot:resultSummary="{ item }">
-                                <v-row dense>
-                                    <v-col>
-                                        URI: {{ item.uri }}
-                                    </v-col>
-                                </v-row>
-                                <v-row dense>
-                                    <v-col>
-                                        <div
-                                            class="divHighlight pl-6"
-                                            v-for="(item2, index2) in item.matches" :key="'matches-' + item.uri + '-' + index2"
-                                            v-html="JSON.stringify(item2['match-text'], null, 4)"
-                                        />
-                                    </v-col>
-                                </v-row>
+                            <!--template v-slot:default="{ resMeta }">
+                                <v-card class="pa-4 mb-4">
+                                    <v-container>
+                                        <v-row dense>
+                                            <v-col class="d-flex justify-end">
+                                                <search-result-viewer
+                                                    class="d-flex justify-end"
+                                                    :document-uri="resMeta.item.uri"
+                                                    :matches="resMeta.item.matches"
+                                                >
+                                                    <template v-slot:default="{ resDetail }">
+                                                        <v-container>
+                                                            <v-row>
+                                                                <v-col>
+                                                                    <div class="font-weight-medium"><span>URI</span>: {{ resDetail.documentUri }}</div>
+                                                                </v-col>
+                                                            </v-row>
+                                                            <v-row>
+                                                                <v-col>
+                                                                    <div>
+                                                                        <pre v-if="resDetail.documentType === 'json'" v-html="resDetail.documentDataPrettyJSON"/>
+                                                                        <pre v-if="resDetail.documentType === 'xml'" v-html="resDetail.documentDataPrettyXML"/>
+                                                                        <pre v-if="resDetail.documentType === 'txt'" v-html="resDetail.highlightText"/>
+                                                                    </div>
+                                                                </v-col>
+                                                            </v-row>
+                                                        </v-container>
+                                                    </template>
+                                                </search-result-viewer>
+                                            </v-col>
+                                        </v-row>
+                                        <v-row dense>
+                                            <v-col>
+                                                {{ resMeta.item.uri }}
+                                            </v-col>
+                                        </v-row>
+                                        <v-row dense>
+                                            <v-col>
+                                                <div
+                                                    class="divHighlight pl-6"
+                                                    v-for="(item2, index2) in resMeta.item.matches" :key="'matches-' + resMeta.index + '-' + index2"
+                                                    v-html="JSON.stringify(item2['match-text'], null, 4)"
+                                                />
+                                            </v-col>
+                                        </v-row>
+                                    </v-container>
+                                </v-card>
                             </template-->
                         </search-results-viewer>
                     </v-col>
@@ -137,7 +165,8 @@
         },
         data() {
             return {
-                chipCount: 0
+                chipCount: 0,
+                vHTMLData: null
             }
         },
         mounted() {
@@ -148,6 +177,61 @@
             },
             getSuggestions(qText) {
                 return [ Date.now() + ': suggestion 1', Date.now() + ': suggestion 2', Date.now() + ': suggestion 3' ];
+            },
+            formatCreatedAtDateTime(dt) {
+                return (new Date(dt)).toLocaleString();
+            },
+            jsonTransform(data) {
+                return {
+                    url: data.url,
+                    id: data.id,
+                    created_at: data.created_at,
+                    updated_at: data.updated_at,
+                    type: data.type,
+                    subject: data.subject,
+                    description: data.description,
+                    priority: data.priority,
+                    status: data.status,
+                    requester: {
+                        name: data.requester.name,
+                        email: data.requester.email,
+                        phone: data.requester.phone
+                    },
+                    assignee: {
+                        name: data.assignee.name,
+                        email: data.assignee.email
+                    },
+                    comments: data.comments.map(comment => { return { type: comment.type, author_name: comment.author_name, html_body: comment.html_body } })
+                };
+            },
+            jsonToHTML(json, indent = 0) {
+                const arr = [];
+                for (const p in json) {
+                    if (typeof json[p] === 'object') {
+                        arr.push(`<div class=\"ml-${indent*4}\"><span style=\"font-weight: bold\">${p}</span>` + this.jsonToHTML(json[p], indent + 1) + `</div>`);
+                    } else {
+                        if (p === 'html_body') {
+                            arr.push(`<div class=\"ml-${indent*4}\"><span style=\"font-weight: bold\">${p}</span>: <div class=\"ml-${indent*5}\">${json[p]}</div></div>`);
+                        } else {
+                            arr.push(`<div class=\"ml-${indent*4}\"><span style=\"font-weight: bold\">${p}</span>: ${json[p]}</div>`);
+                        }
+                    }
+                }
+                let result;
+                if (indent === 0) {
+                    result = `<div>` + arr.join('') + `</div>`;
+                } else {
+                    result = arr.join('');
+                }
+                return result;
+            },
+            displayData(container) {
+                if (container.documentGetStatus === 'got') {
+                    const data = container.highlightJSON(this.jsonTransform(container.documentData), 6, container.uniqueMatches);
+                    return this.jsonToHTML(data).replace(/highlight_start(.*?)highlight_end/g, '<span class="highlight">$1</span>');
+                } else {
+                    return 'Waiting for data';
+                }
             }
         },
         computed: {
@@ -185,7 +269,7 @@
 </script>
 
 <style scoped>
-    pre >>> .highlight {
+    div >>> .highlight {
         background-color: yellow;
         font-style: italic;
         font-weight: bold;

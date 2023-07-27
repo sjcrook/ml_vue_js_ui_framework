@@ -3,41 +3,41 @@
     <div
         v-if="results.total > 0"
     >
-        <v-card
+        <div
             v-for="(item, index) in results.results" :key="'results-' + index"
-            class="pa-4 mb-4"
         >
-            <v-container>
-                <v-row dense>
-                    <v-col class="d-flex justify-end">
-                        <slot name="resultDetail" v-bind:item="item">
-                            <!-- Render result detail -->
-                            <search-result-viewer
-                                class="d-flex justify-end"
-                                :document-uri="item.uri"
-                                :matches="item.matches"
-                            />
-                        </slot>
-                    </v-col>
-                </v-row>
-                <slot name="resultSummary" v-bind:item="item">
-                    <v-row dense>
-                        <v-col>
-                            {{ niceDocumentURI(item.uri) }}
-                        </v-col>
-                    </v-row>
-                    <v-row dense>
-                        <v-col>
-                            <div
-                                class="divHighlight pl-6"
-                                v-for="(item2, index2) in item.matches" :key="'matches-' + index + '-' + index2"
-                                v-html="matchText(item2['match-text'])"
-                            />
-                        </v-col>
-                    </v-row>
-                </slot>
-            </v-container>
-        </v-card>
+            <slot v-bind:resMeta="{ item, index }">
+                <v-card class="pa-4 mb-4">
+                    <v-container>
+                        <v-row dense>
+                            <v-col class="d-flex justify-end">
+                                <slot name="resDetail" v-bind:item="item">
+                                    <search-result-viewer
+                                        class="d-flex justify-end"
+                                        :document-uri="item.uri"
+                                        :matches="item.matches"
+                                    />
+                                </slot>
+                            </v-col>
+                        </v-row>
+                        <v-row dense>
+                            <v-col>
+                                {{ niceDocumentURI(item.uri) }}
+                            </v-col>
+                        </v-row>
+                        <v-row dense>
+                            <v-col>
+                                <div
+                                    class="divHighlight pl-6"
+                                    v-for="(item2, index2) in item.matches" :key="'matches-' + index + '-' + index2"
+                                    v-html="matchText(item2['match-text'])"
+                                />
+                            </v-col>
+                        </v-row>
+                    </v-container>
+                </v-card>
+            </slot>
+        </div>
     </div>
 
 </template>

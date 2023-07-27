@@ -17,10 +17,15 @@
     
     export default {
         mixins: [],
+        props: {
+            pageLengths: {
+                type: Array,
+                default: () => [ 5, 10, 15, 20 ]
+            }
+        },
         data() {
             return {
                 internalValue: 10,
-                pageLengths: [ 5, 10, 15, 20 ]
             }
         },
         created() {

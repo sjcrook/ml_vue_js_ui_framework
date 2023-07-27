@@ -131,9 +131,6 @@
         },
         methods: {
             copyValuesToInternal() {
-                /*
-
-                */
                 const additions = [];
                 const deletions = [];
                 /*
@@ -150,7 +147,9 @@
                 */
                 this.values.forEach(item => {
                     const index = this.internalValues.findIndex(item2 => item2.value === item.value);
-                    this.internalValues.splice(index, 1, { ...this.internalValues[index], count: item.count });
+                    if (index !== -1) {
+                        this.internalValues.splice(index, 1, { ...this.internalValues[index], count: item.count });
+                    }
                 });
                 /*
                     If internalValues has an item that doesn't exist in the search results
@@ -271,7 +270,7 @@
                 );
             },
             capitalizeFacetName(name) {
-                return name.charAt(0).toUpperCase() + name.slice(1);
+                return name.charAt(0).toUpperCase() + name.slice(1).replace('_', ' ');
             }
         },
         computed: {

@@ -30,8 +30,8 @@
                 </v-btn>
                 <v-toolbar-title>Detail</v-toolbar-title>
             </v-toolbar>
-            <v-container>
-                <slot v-bind:container="container">
+            <slot v-bind:resDetail="container">
+                <v-container>
                     <v-row>
                         <v-col>
                             <div class="font-weight-medium"><span>URI</span>: {{ container.documentUri }}</div>
@@ -46,8 +46,8 @@
                             </div>
                         </v-col>
                     </v-row>
-                </slot>
-            </v-container>
+                </v-container>
+            </slot>
         </v-card>
     </v-dialog>
 
@@ -69,6 +69,22 @@
             matches: {
                 type: Array,
                 default: () => []
+            },
+            documentTypeIconOverride: {
+                type: String,
+                default: undefined
+            },
+            JsonTransform: {
+                type: Function,
+                default: null
+            },
+            XmlTransform: {
+                type: Function,
+                default: null
+            },
+            TextTransform: {
+                type: Function,
+                default: null
             }
         },
         data() {
@@ -170,14 +186,21 @@
             }),
             documentType() {
                 if (this.documentUri) {
-                    return this.documentUri.replace(/.*\./, '');
+                    const extn = this.documentUri.replace(/.*\./, '');
+                    if (extn.length > 0) {
+                        return extn;
+                    } else {
+                        return 'unknown';
+                    }
                 } else {
                     return 'unknown';
                 }
             },
             documentTypeIcon() {
                 // Determine which icon to display based on the document type.
-                if (this.documentType === 'json') {
+                if (this.documentTypeIconOverride) {
+                    return this.documentTypeIconOverride;
+                } else if (this.documentType === 'json') {
                     return 'code-json';
                 } else if (this.documentType === 'xml') {
                     return 'xml';
@@ -185,33 +208,6 @@
                     return 'text-box-outline';
                 } else {
                     return 'file-document-outline';
-                }
-            },
-            documentDataPrettyJSON() {
-                if (this.documentGetStatus === 'got') {
-                    return JSON.stringify(this.highlightJSON(this.documentData, 6, this.uniqueMatches), null, 4).replace(/highlight_start(.*?)highlight_end/g, '<span class="highlight">$1</span>');
-                } else {
-                    return '{}';
-                }
-            },
-            documentDataPrettyXML() {
-                if (this.documentGetStatus === 'got') {
-                    // Parse the XML string into a node structure.
-                    const doc = (new DOMParser()).parseFromString(this.documentData, "application/xml");
-                    this.highlightXML(doc, 10, this.uniqueMatches);    
-                    const highlightedXMLStr = this.prettifyXML(doc).replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/highlight_start(.*?)highlight_end/g, '<span class="highlight">$1</span>');
-                    return highlightedXMLStr;
-                } else {
-                    return '</>';
-                }
-            },
-            highlightText() {
-                if (this.documentGetStatus === 'got') {
-                    const regExpStr = '(' + this.uniqueMatches.join('|') + ')';
-                    const re = new RegExp(regExpStr, 'g');
-                    return this.documentData.replace(re, '<span class="highlight">$1</span>');
-                } else {
-                    return '';
                 }
             },
             uniqueMatches() {
@@ -228,14 +224,49 @@
                 });
                 return result;
             },
+            documentDataPrettyJSON() {
+                if (this.documentGetStatus === 'got') {
+                    const data = this.JsonTransform ? this.JsonTransform(this.documentData) : this.documentData;
+                    return JSON.stringify(this.highlightJSON(data, 6, this.uniqueMatches), null, 4).replace(/highlight_start(.*?)highlight_end/g, '<span class="highlight">$1</span>');
+                } else {
+                    return '{}';
+                }
+            },
+            documentDataPrettyXML() {
+                if (this.documentGetStatus === 'got') {
+                    // Parse the XML string into a node structure.
+                    const doc = (new DOMParser()).parseFromString(this.documentData, "application/xml");
+                    const transformedDoc = this.XmlTransform ? this.XmlTransform(doc) : doc;
+                    this.highlightXML(transformedDoc, 10, this.uniqueMatches);    
+                    const highlightedXMLStr = this.prettifyXML(transformedDoc).replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/highlight_start(.*?)highlight_end/g, '<span class="highlight">$1</span>');
+                    return highlightedXMLStr;
+                } else {
+                    return '</>';
+                }
+            },
+            highlightText() {
+                if (this.documentGetStatus === 'got') {
+                    const newData = this.TextTransform ? this.TextTransform(this.documentData) : this.documentData;
+                    const regExpStr = '(' + this.uniqueMatches.join('|') + ')';
+                    const re = new RegExp(regExpStr, 'g');
+                    return newData.replace(re, '<span class="highlight">$1</span>');
+                } else {
+                    return '';
+                }
+            },
             container() {
                 return {
                     documentUri: this.documentUri,
                     documentType: this.documentType,
-                    documentDataPrettyJSON: this.documentDataPrettyJSON,
-                    documentDataPrettyXML: this.documentDataPrettyXML,
-                    highlightText: this.highlightText
-                }
+                    documentGetStatus: this.documentGetStatus,
+                    documentData: this.documentData,
+                    uniqueMatches: this.uniqueMatches,
+                    highlightJSON: this.highlightJSON,
+                    highlightXML: this.highlightXML,
+                    documentDataPrettyJSON: this.documentType === 'json' ? this.documentDataPrettyJSON : null,
+                    documentDataPrettyXML: this.documentType === 'xml' ? this.documentDataPrettyXML : null,
+                    highlightText: this.documentType === 'txt' ? this.highlightText : null
+                };
             }
         },
         watch: {
